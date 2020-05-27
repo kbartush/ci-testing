@@ -1,5 +1,5 @@
 {
-  "name": "ci-testing",
+  "name": "ci-testing-kbartush",
   "version": "0.1.0",
   "description": "Library that facilitates interaction with Mazzaroth nodes from both the browser and node-js",
   "main": "dist/index.js",
