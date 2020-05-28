@@ -15,6 +15,9 @@ jobs:
       - run:
           name: Install ci tools
           command: 'mkdir -p ~/.build_tools/node && npm install --prefix ~/.build_tools/node kl-ci-tools'
+      - run:
+          name: Setup tools var
+          command: 'echo "export KCT=~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js" >> $BASH_ENV'
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
@@ -58,7 +61,7 @@ jobs:
           key: git-sha-{{ .Revision }}
       - run:
           name: Set Develop Version
-          command: git rev-parse develop | cut -c1-10 | xargs -I[] kl-ci-tools tag dev.[]
+          command: git rev-parse develop | cut -c1-10 | xargs -I[] $KCT tag dev.[]
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
@@ -74,7 +77,7 @@ jobs:
           key: git-sha-{{ .Revision }}
       - run:
           name: Verify dep versions
-          command: kl-ci-tools validate
+          command: $KCT validate
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
