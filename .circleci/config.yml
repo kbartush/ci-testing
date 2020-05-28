@@ -36,6 +36,7 @@ jobs:
           paths:
             - node_modules
             - dist
+            - ~/.build_tools
   test:
     docker:
       - image: circleci/node:latest
