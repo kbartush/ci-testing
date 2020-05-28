@@ -51,8 +51,6 @@ jobs:
           name: Test
           command: npm test
   publish-dev:
-    environment:
-        KCT:  ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js
     docker:
       - image: circleci/node:latest
     steps:
@@ -61,7 +59,7 @@ jobs:
           key: git-sha-{{ .Revision }}
       - run:
           name: Set Develop Version
-          command: git rev-parse develop | cut -c1-10 | xargs -I[] $KCT tag dev.[]
+          command: git rev-parse develop | cut -c1-10 | xargs -I[] ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js tag dev.[]
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
@@ -69,8 +67,6 @@ jobs:
           name: Publish package
           command: npm publish --tag develop
   publish-latest:
-    environment:
-        KCT:  ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js
     docker:
       - image: circleci/node:latest
     steps:
@@ -79,7 +75,7 @@ jobs:
           key: git-sha-{{ .Revision }}
       - run:
           name: Verify dep versions
-          command: $KCT validate
+          command: ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js validate
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
