@@ -1,7 +1,7 @@
-version: 2
+version: 2.1
 
 jobs:
-  init-deps:
+  init:
     docker:
       - image: circleci/node:latest
     steps:
@@ -64,26 +64,44 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --tag develop
+  publish-version:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: git-sha-{{ .Revision }}
+      - run:
+          name: Verify dep versions
+          command: kl-ci-tools validate
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - init-deps
+      - init
       - build:
           requires:
-            - init-deps
+            - init
       - test:
           requires:
-            - init-deps
+            - init
             - build
       - publish-dev:
           requires:
-            - init-deps
+            - init
             - build
             - test
           filters:
             branches:
               only: develop
-
-
+      - publish-version:
+          requires:
+            - init
+            - build
+            - test
+          filters:
+            branches:
+              only: develop
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
