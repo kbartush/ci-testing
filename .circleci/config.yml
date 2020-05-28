@@ -14,14 +14,13 @@ jobs:
           command: npm i
       - run:
           name: Install ci tools
-          command: 'sudo npm i -g kl-ci-tools'
+          command: 'mkdir -p ~/.build_tools/node && npm install --prefix ~/.build_tools/node'
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
             - node_modules
             - dist
-            - /usr/local/bin
-            - /usr/local/lib/node_modules
+            - ~/.build_tools
   build:
     docker:
       - image: circleci/node:latest
