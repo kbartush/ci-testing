@@ -1,7 +1,7 @@
-version: 2
+version: 2.1
 
 jobs:
-  init-deps:
+  init:
     docker:
       - image: circleci/node:latest
     steps:
@@ -64,7 +64,7 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --tag develop
-  publish-dev:
+  publish-version:
     docker:
       - image: circleci/node:latest
     steps:
@@ -79,25 +79,25 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - init-deps
+      - init
       - build:
           requires:
-            - init-deps
+            - init
       - test:
           requires:
-            - init-deps
+            - init
             - build
       - publish-dev:
           requires:
-            - init-deps
+            - init
             - build
             - test
           filters:
             branches:
               only: develop
-      - pubish-version:
+      - publish-version:
           requires:
-            - init-deps
+            - init
             - build
             - test
           filters:
