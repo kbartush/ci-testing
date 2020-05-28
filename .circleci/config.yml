@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  init-deps:
     docker:
       - image: circleci/node:latest
     steps:
@@ -9,11 +9,24 @@ jobs:
       - run:
           name: Update npm
           command: 'sudo npm install -g npm@latest'
-      - restore_cache:
-          key: git-sha-{{ .Revision }}
       - run:
           name: NPM Install
-          command: npm install
+          command: npm i
+      - run:
+          name: Install ci tools
+          command: 'sudo npm i -g kl-ci-tools'
+      - save_cache:
+          key: git-sha-{{ .Revision }}
+          paths:
+            - node_modules
+            - dist
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: git-sha-{{ .Revision }}
       - run:
           name: NPM Build
           command: npm run build
@@ -44,7 +57,7 @@ jobs:
           key: git-sha-{{ .Revision }}
       - run:
           name: Set Develop Version
-          command: git rev-parse develop | cut -c1-10 | xargs -I[] ./node_modules/package-tagger/index.js dev.[]
+          command: git rev-parse develop | cut -c1-10 | xargs -I[] kl-ci-tools tag dev.[]
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
@@ -56,12 +69,17 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
+      - init-deps
+      - build:
+          requires:
+            - init-deps
       - test:
           requires:
+            - init-deps
             - build
       - publish-dev:
           requires:
+            - init-deps
             - build
             - test
           filters:
