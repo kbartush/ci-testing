@@ -1,7 +1,7 @@
 {
-  "name": "ci-testing",
+  "name": "krb-ci-testing",
   "version": "0.1.0",
-  "description": "Library that facilitates interaction with Mazzaroth nodes from both the browser and node-js",
+  "description": "Testing continuous integration stuff",
   "main": "dist/index.js",
   "files": [
     "dist"
@@ -39,11 +39,6 @@
     "sinon": "^7.3.2"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "debug": "^4.1.1",
-    "elliptic": "^6.4.1",
-    "mazzaroth-xdr": "develop",
-    "ws": "^7.2.5",
-    "xdr-js-serialize": "develop"
+    "debug": "^4.1.1"
   }
 }

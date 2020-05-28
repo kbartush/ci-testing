@@ -11,7 +11,7 @@ jobs:
           command: 'sudo npm install -g npm@latest'
       - run:
           name: NPM Install
-          command: npm ci
+          command: npm i
       - run:
           name: Install ci tools
           command: 'sudo npm i -g kl-ci-tools'
