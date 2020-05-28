@@ -20,6 +20,8 @@ jobs:
           paths:
             - node_modules
             - dist
+            - /usr/local/bin
+            - /usr/local/lib/node_modules
   build:
     docker:
       - image: circleci/node:latest
@@ -82,7 +84,7 @@ jobs:
           command: npm publish --tag latest
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       - init
