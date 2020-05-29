@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "mazzaroth-js": "develop",
-    "mazzaroth-xdr": "develop"
+    "mazzaroth-js": "0.1.0-alpha2",
+    "mazzaroth-xdr": "0.1.0-alpha"
   }
 }
