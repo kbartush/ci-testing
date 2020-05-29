@@ -104,7 +104,7 @@ jobs:
           command: kl-ci-tools validate
       - run:
           name: commit updates
-          command: git commit -m "Dependency update for release $CIRCLE_TAG"
+          command: git add -A && git commit -m "Dependency update for release $CIRCLE_TAG"
       - run:
           name: push release branch
           command: git push origin release/$CIRCLE_TAG
