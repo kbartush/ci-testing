@@ -97,6 +97,9 @@ jobs:
           name: create git user
           command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI"
       - run:
+          name: update version
+          command:  npm -no-git-tag-version version $CIRCLE_TAG
+      - run:
           name: update dependencies
           command: kl-ci-tools deps | xargs -I[] npm install []@latest
       - run:
