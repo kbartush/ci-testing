@@ -39,6 +39,8 @@
     "sinon": "^7.3.2"
   },
   "dependencies": {
-    "debug": "^4.1.1"
+    "debug": "^4.1.1",
+    "mazzaroth-js": "develop",
+    "mazzaroth-xdr": "develop"
   }
 }

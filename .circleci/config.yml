@@ -82,27 +82,46 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --tag latest
+  trigger-release:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run:
+          name: Install ci tools
+          command: 'npm install -g kl-ci-tools'
+      - run:
+          name: checkout release branch
+          command: git checkout -b release/$CIRCLE_TAG
+      - run:
+          name: update dependencies
+          command: kl-ci-tools deps | xargs -I[] npm install []@latest
+      - run:
+          name: validate package json
+          command: kl-ci-tools validate
+      - run:
+          name: push release branch
+          command: git push origin release/$CIRCLE_TAG
+
 
 workflows:
   version: 2.1
-  build_and_test:
+  start_release:
     jobs:
-      - init:
+      - trigger-release:
           filters:
             tags:
               only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
+
+  build_and_test:
+    jobs:
+      - init
       - build:
           requires:
             - init
-          filters:
-            tags:
-              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
       - test:
           requires:
             - build
-          filters:
-            tags:
-              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
       - publish-dev:
           requires:
             - test
@@ -113,7 +132,5 @@ workflows:
           requires:
             - test
           filters:
-            tags:
-              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
             branches:
-              ignore: /.*/
+              only: /release\/v*/
