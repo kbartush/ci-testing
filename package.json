@@ -1,6 +1,6 @@
 {
   "name": "ci-testing-kbartush",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Testing continuous integration stuff",
   "main": "dist/index.js",
   "files": [
