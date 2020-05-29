@@ -89,7 +89,7 @@ jobs:
       - checkout
       - run:
           name: Install ci tools
-          command: 'npm install -g kl-ci-tools'
+          command: 'sudo npm install -g kl-ci-tools'
       - run:
           name: checkout release branch
           command: git checkout -b release/$CIRCLE_TAG
@@ -112,7 +112,8 @@ workflows:
           filters:
             tags:
               only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
-
+            branches:
+              ignore: /.*/
   build_and_test:
     jobs:
       - init
