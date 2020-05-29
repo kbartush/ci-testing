@@ -84,7 +84,7 @@ jobs:
           command: npm publish --tag latest
       - run:
           name: Merge back to master
-          comand: git checkout master && git merge $CIRCLE_BRANCH
+          command: git checkout master && git merge $CIRCLE_BRANCH
 
 
   trigger-release:
