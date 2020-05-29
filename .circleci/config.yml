@@ -103,7 +103,7 @@ jobs:
           command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI"
       - run:
           name: update version
-          command:  npm -no-git-tag-version version $CIRCLE_TAG
+          command:  npm version $CIRCLE_TAG
       - run:
           name: update dependencies
           command: kl-ci-tools deps | xargs -I[] npm install []@latest
@@ -120,14 +120,6 @@ jobs:
 
 workflows:
   version: 2.1
-  start_release:
-    jobs:
-      - trigger-release:
-          filters:
-            tags:
-              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
-            branches:
-              ignore: /.*/
   build_and_test:
     jobs:
       - init
