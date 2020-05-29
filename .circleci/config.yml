@@ -82,6 +82,11 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --tag latest
+      - run:
+          name: Merge back to master
+          comand: git checkout master && git merge $CIRCLE_BRANCH
+
+
   trigger-release:
     docker:
       - image: circleci/node:latest
