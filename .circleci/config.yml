@@ -87,13 +87,22 @@ workflows:
   version: 2.1
   build_and_test:
     jobs:
-      - init
+      - init:
+          filters:
+            tags:
+              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
       - build:
           requires:
             - init
+          filters:
+            tags:
+              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
       - test:
           requires:
             - build
+          filters:
+            tags:
+              only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
       - publish-dev:
           requires:
             - test
@@ -104,7 +113,7 @@ workflows:
           requires:
             - test
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v([0-9]+)\.([0-9]+)\.([0-9]+)$/
+            branches:
+              ignore: /.*/
