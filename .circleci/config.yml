@@ -94,11 +94,11 @@ jobs:
           name: commit updates
           command: git add -A && git commit -m "Dependency update for release $CIRCLE_TAG"
       - run:
-          name: Publish package
-          command: npm publish --tag latest
-      - run:
           name: Merge back to master
           command: git checkout master && git merge $CIRCLE_BRANCH
+      - run:
+          name: Publish package
+          command: npm publish --tag latest
 
 workflows:
   version: 2.1
