@@ -24,7 +24,7 @@ jobs:
           name: debug
           command: cat package.json
       - save_cache:
-          key: git-sha-{{ .Revision }}$CIRCLE_BRANCH
+          key: git-sha-{{ .Revision }}{{ .Branch }}
           paths:
             - package.json
             - node_modules
@@ -37,7 +37,7 @@ jobs:
           name: remove package to get cached version
           command: rm package.json
       - restore_cache:
-          key: git-sha-{{ .Revision }}
+          key: git-sha-{{ .Revision }}{{ .Branch }}
       - run:
           name: debug
           command: cat package.json
@@ -51,7 +51,7 @@ jobs:
           name: Test
           command: npm test
       - save_cache:
-          key: git-sha-{{ .Revision }}$CIRCLE_BRANCH
+          key: git-sha-{{ .Revision }}{{ .Branch }}
           paths:
             - package.json
             - dist
@@ -64,7 +64,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: git-sha-{{ .Revision }}
+          key: git-sha-{{ .Revision }}{{ .Branch }}
       - run:
           name: Set Develop Version
           command: git rev-parse develop | cut -c1-10 | xargs -I[] ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js tag dev.[]
@@ -83,7 +83,7 @@ jobs:
           name: remove package to get cached version
           command: rm package.json
       - restore_cache:
-          key: git-sha-{{ .Revision }}
+          key: git-sha-{{ .Revision }}{{ .Branch }}
       - run:
           name: update version
           command: echo $CIRCLE_BRANCH | sed 's:release/::' | npm version
