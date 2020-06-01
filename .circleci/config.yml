@@ -31,11 +31,10 @@ jobs:
             - ~/.build_tools
       - persist_to_workspace:
           root: ~/repo
-          paths: package.json
+          paths: .
   build:
     <<: *defaults
     steps:
-      - checkout
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
@@ -52,7 +51,7 @@ jobs:
             - ~/.build_tools
       - persist_to_workspace:
           root: ~/repo
-          paths: package.json
+          paths: .
   test:
     <<: *defaults
     steps:
@@ -67,7 +66,7 @@ jobs:
           command: npm test
       - persist_to_workspace:
           root: ~/repo
-          paths: package.json
+          paths: .
 
   publish-dev:
     <<: *defaults
