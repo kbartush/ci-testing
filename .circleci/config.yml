@@ -77,7 +77,7 @@ jobs:
           command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI"
       - run:
           name: update version
-          command: echo $CIRCLE_BRANCH | sed 's:release/::' | xargs npm version --no-git-tag-version version
+          command: echo $CIRCLE_BRANCH | sed 's:release/::' | xargs npm version --no-git-tag-version
       - run:
           name: verify package.json
           command: ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js validate
