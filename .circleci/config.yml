@@ -26,15 +26,13 @@ jobs:
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
+            - package.json
             - node_modules
-            - dist
             - ~/.build_tools
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-  build:
+  test:
     <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
@@ -43,30 +41,20 @@ jobs:
       - run:
           name: NPM Build
           command: npm run build
-      - save_cache:
-          key: git-sha-{{ .Revision }}
-          paths:
-            - node_modules
-            - dist
-            - ~/.build_tools
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-  test:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          key: git-sha-{{ .Revision }}
       - run:
           name: Lint
           command: npm run lint
       - run:
           name: Test
           command: npm test
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
+      - save_cache:
+          key: git-sha-{{ .Revision }}
+          paths:
+            - package.json
+            - dist
+            - node_modules
+            - ~/.build_tools
+
 
   publish-dev:
     <<: *defaults
@@ -117,12 +105,9 @@ workflows:
   build_and_test:
     jobs:
       - init
-      - build:
-          requires:
-            - init
       - test:
           requires:
-            - build
+            - init
       - publish-dev:
           requires:
             - test
