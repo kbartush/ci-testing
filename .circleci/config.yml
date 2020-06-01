@@ -76,9 +76,6 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run:
-          name: remove package to get cached version
-          command: rm package.json
       - restore_cache:
           key: git-sha-{{ .Revision }}{{ .Branch }}
       - run:
