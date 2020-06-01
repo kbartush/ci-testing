@@ -81,7 +81,7 @@ jobs:
           key: git-sha-{{ .Revision }}
       - run:
           name: update version
-          command: echo $CIRCLE_BRAHCN | sed 's:release/::' | npm version
+          command: echo $CIRCLE_BRANCH | sed 's:release/::' | npm version
       - run:
           name: Verify package.json
           command: ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js validate
