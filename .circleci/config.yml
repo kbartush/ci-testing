@@ -19,6 +19,9 @@ jobs:
           if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
             ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js deps | xargs -I[] npm install []@latest
           fi
+      - run:
+          name: debug
+          command: cat package.json
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
@@ -34,7 +37,7 @@ jobs:
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
-          name: deub
+          name: debug
           command: cat package.json
       - run:
           name: NPM Build
