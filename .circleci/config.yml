@@ -1,9 +1,13 @@
 version: 2.1
 
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:latest
+
 jobs:
   init:
-    docker:
-      - image: circleci/node:latest
+    <<: *defaults
     steps:
       - checkout
       - run:
@@ -22,17 +26,19 @@ jobs:
       - run:
           name: debug
           command: cat package.json
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
-            - package.json
             - node_modules
             - dist
             - ~/.build_tools
   build:
-    docker:
-      - image: circleci/node:latest
+    <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
@@ -44,14 +50,13 @@ jobs:
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
-            - package.json
             - node_modules
             - dist
             - ~/.build_tools
   test:
-    docker:
-      - image: circleci/node:latest
+    <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
@@ -60,10 +65,11 @@ jobs:
       - run:
           name: Test
           command: npm test
+
   publish-dev:
-    docker:
-      - image: circleci/node:latest
+    <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
@@ -75,10 +81,11 @@ jobs:
       - run:
           name: Publish package
           command: npm publish --tag develop
+
   publish-latest:
-    docker:
-      - image: circleci/node:latest
+    <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
