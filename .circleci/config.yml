@@ -79,49 +79,26 @@ jobs:
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
-          name: Verify dep versions
+          name: update version
+          command: echo $CIRCLE_BRAHCN | sed 's:release/::' | npm version
+      - run:
+          name: Verify package.json
           command: ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js validate
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
+      - run:
+          name: create git user
+          command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI"
+      - run:
+          name: commit updates
+          command: git add -A && git commit -m "Dependency update for release $CIRCLE_TAG"
       - run:
           name: Publish package
           command: npm publish --tag latest
       - run:
           name: Merge back to master
           command: git checkout master && git merge $CIRCLE_BRANCH
-
-
-  trigger-release:
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - run:
-          name: Install ci tools
-          command: 'sudo npm install -g kl-ci-tools'
-      - run:
-          name: checkout release branch
-          command: git checkout -b release/$CIRCLE_TAG
-      - run:
-          name: create git user
-          command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI"
-      - run:
-          name: update version
-          command:  npm version $CIRCLE_TAG
-      - run:
-          name: update dependencies
-          command: kl-ci-tools deps | xargs -I[] npm install []@latest
-      - run:
-          name: validate package json
-          command: kl-ci-tools validate
-      - run:
-          name: commit updates
-          command: git add -A && git commit -m "Dependency update for release $CIRCLE_TAG"
-      - run:
-          name: push release branch
-          command: git push origin release/$CIRCLE_TAG
-
 
 workflows:
   version: 2.1
