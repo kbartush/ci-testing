@@ -24,7 +24,7 @@ jobs:
           name: debug
           command: cat package.json
       - save_cache:
-          key: git-sha-{{ .Revision }}
+          key: git-sha-{{ .Revision }}$CIRCLE_BRANCH
           paths:
             - package.json
             - node_modules
@@ -51,7 +51,7 @@ jobs:
           name: Test
           command: npm test
       - save_cache:
-          key: git-sha-{{ .Revision }}
+          key: git-sha-{{ .Revision }}$CIRCLE_BRANCH
           paths:
             - package.json
             - dist
