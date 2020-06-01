@@ -11,18 +11,15 @@ jobs:
     steps:
       - checkout
       - run:
-          name: NPM Install
+          name: npm install
           command: npm i
       - run:
-          name: Install ci tools
+          name: install ci tools
           command: 'mkdir -p ~/.build_tools/node && npm install --prefix ~/.build_tools/node kl-ci-tools'
       - run: |
           if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
             ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js deps | xargs -I[] npm install []@latest
           fi
-      - run:
-          name: debug
-          command: cat package.json
       - save_cache:
           key: git-sha-{{ .Revision }}{{ .Branch }}
           paths:
@@ -36,16 +33,13 @@ jobs:
       - restore_cache:
           key: git-sha-{{ .Revision }}{{ .Branch }}
       - run:
-          name: debug
-          command: cat package.json
-      - run:
-          name: NPM Build
+          name: npm build
           command: npm run build
       - run:
-          name: Lint
+          name: lint
           command: npm run lint
       - run:
-          name: Test
+          name: test
           command: npm test
       - save_cache:
           key: git-sha-{{ .Revision }}{{ .Branch }}
@@ -63,13 +57,13 @@ jobs:
       - restore_cache:
           key: git-sha-{{ .Revision }}{{ .Branch }}
       - run:
-          name: Set Develop Version
+          name: set develop version
           command: git rev-parse develop | cut -c1-10 | xargs -I[] ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js tag dev.[]
       - run:
-          name: Authenticate with registry
+          name: authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
       - run:
-          name: Publish package
+          name: publish package
           command: npm publish --tag develop
 
   publish-latest:
@@ -83,24 +77,24 @@ jobs:
           command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI"
       - run:
           name: update version
-          command: echo $CIRCLE_BRANCH | sed 's:release/::' | xargs npm version --force
+          command: echo $CIRCLE_BRANCH | sed 's:release/::' | xargs npm version --force --no-git-tag-version version
       - run:
-          name: Verify package.json
+          name: verify package.json
           command: ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js validate
       - run:
           name: commit updates
           command: git add -A && git commit -m "Dependency/Version update for $CIRCLE_BRANCH"
       - run:
-          name: Merge back to master
+          name: merge back to master
           command: git checkout master && git rebase -Xtheirs $CIRCLE_BRANCH && git push origin master
       - run:
-          name: Authenticate with registry
+          name: authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
       - run:
-          name: Publish package
+          name: publish package
           command: npm publish --tag latest
       - run:
-          name: Checkout and develop
+          name: checkout and develop
           command: git checkout develop
       - run:
           name: update develop version
