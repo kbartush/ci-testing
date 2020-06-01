@@ -34,6 +34,9 @@ jobs:
       - restore_cache:
           key: git-sha-{{ .Revision }}
       - run:
+          name: deub
+          command: cat package.json
+      - run:
           name: NPM Build
           command: npm run build
       - save_cache:
