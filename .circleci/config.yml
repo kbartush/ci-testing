@@ -95,7 +95,7 @@ jobs:
           command: git add -A && git commit -m "Dependency/Version update for $CIRCLE_BRANCH"
       - run:
           name: Merge back to master
-          command: git checkout master && git rebase $CIRCLE_BRANCH && git push origin master
+          command: git checkout master && git rebase -Xtheirs $CIRCLE_BRANCH && git push origin master
       - run:
           name: Checkout and develop
           command: git checkout develop
