@@ -15,9 +15,14 @@ jobs:
       - run:
           name: Install ci tools
           command: 'mkdir -p ~/.build_tools/node && npm install --prefix ~/.build_tools/node kl-ci-tools'
+      - run: |
+          if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
+            ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js | xargs -I[] npm install []@latest
+          fi
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
+            - package.json
             - node_modules
             - dist
             - ~/.build_tools
