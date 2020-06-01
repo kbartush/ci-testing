@@ -88,14 +88,17 @@ jobs:
           name: Verify package.json
           command: ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js validate
       - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
-      - run:
           name: commit updates
           command: git add -A && git commit -m "Dependency/Version update for $CIRCLE_BRANCH"
       - run:
           name: Merge back to master
           command: git checkout master && git rebase -Xtheirs $CIRCLE_BRANCH && git push origin master
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
+      - run:
+          name: Publish package
+          command: npm publish --tag latest
       - run:
           name: Checkout and develop
           command: git checkout develop
@@ -105,9 +108,6 @@ jobs:
       - run:
           name: commit updates
           command: git add -A && git commit -m "Version update for $CIRCLE_BRANCH" && git push origin develop
-      - run:
-          name: Publish package
-          command: npm publish --tag latest
 
 workflows:
   version: 2.1
