@@ -39,6 +39,7 @@ jobs:
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
+            - package.json
             - node_modules
             - dist
             - ~/.build_tools
