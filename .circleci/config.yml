@@ -23,15 +23,15 @@ jobs:
       - run:
           name: debug
           command: cat package.json
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
       - save_cache:
           key: git-sha-{{ .Revision }}
           paths:
             - node_modules
             - dist
             - ~/.build_tools
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
   build:
     <<: *defaults
     steps:
@@ -50,6 +50,9 @@ jobs:
             - node_modules
             - dist
             - ~/.build_tools
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
   test:
     <<: *defaults
     steps:
@@ -62,6 +65,9 @@ jobs:
       - run:
           name: Test
           command: npm test
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 
   publish-dev:
     <<: *defaults
