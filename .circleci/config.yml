@@ -5,6 +5,10 @@ executors:
     working_directory: ~/repo
     docker:
       - image: circleci/rust:latest
+  node-latest:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:latest
 
 jobs:
   test-rs:
@@ -58,7 +62,7 @@ jobs:
             - ./target
 
   init:
-    <<: *defaults
+    executor: node-latest
     steps:
       - checkout
       - run:
@@ -78,7 +82,7 @@ jobs:
             - node_modules
             - ~/.build_tools
   test:
-    <<: *defaults
+    executor: node-latest
     steps:
       - checkout
       - restore_cache:
@@ -102,7 +106,7 @@ jobs:
 
 
   publish-dev:
-    <<: *defaults
+    executor: node-latest
     steps:
       - checkout
       - restore_cache:
@@ -118,7 +122,7 @@ jobs:
           command: npm publish --tag develop
 
   publish-latest:
-    <<: *defaults
+    executor: node-latest
     steps:
       - checkout
       - restore_cache:
