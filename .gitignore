@@ -7,3 +7,9 @@ src/types.js
 types/
 package-lock.json
 .npmrc
+
+
+#Added by cargo
+
+/target
+Cargo.lock
