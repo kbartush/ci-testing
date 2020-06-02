@@ -86,7 +86,7 @@ jobs:
           command: git add -A && git commit -m "Dependency/Version update for $CIRCLE_BRANCH"
       - run:
           name: rebase to master
-          command: git rebase -Xours origin/master && git push origin $CIRCLE_BRANCH
+          command: git rebase -Xours origin/master
       - run:
           name: update master
           command: git checkout master && git pull origin $CIRCLE_BRANCH && git push origin master
