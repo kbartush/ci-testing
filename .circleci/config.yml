@@ -86,7 +86,7 @@ jobs:
           command: git add -A && git commit -m "Dependency/Version update for $CIRCLE_BRANCH"
       - run:
           name: merge back to master
-          command: git checkout master && git rebase -Xtheirs $CIRCLE_BRANCH && git push origin master
+          command: git checkout master && git rebase -Xtheirs $CIRCLE_BRANCH && git commit -m "rebase master" && git push origin master
       - run:
           name: authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
