@@ -30,6 +30,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Cargo install
+          command: cargo install cargo-edit
+      - run:
+          name: Check formatting
+          command: |
+            rustfmt --version
+            cargo fmt -- --check
+      - run:
           name: update dependencies if releasing
           command: |
             if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
@@ -39,11 +47,6 @@ jobs:
       - run:
           name: debug
           command: cat Cargo.toml
-      - run:
-          name: Check formatting
-          command: |
-            rustfmt --version
-            cargo fmt -- --check
       - run:
           name: Nightly Build
           command: |
