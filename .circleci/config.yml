@@ -78,7 +78,7 @@ jobs:
           command: cargo login $cargo_TOKEN
       - run:
           name: cargo publish
-          command: cargo publish
+          command: cargo publish --allow-dirty
       - run:
           name: setup git config
           command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI" && git config --global core.editor "\usr\local\bin\subl -n -w"
