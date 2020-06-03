@@ -27,9 +27,10 @@ jobs:
           name: update dependencies if releasing
           command: |
             if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
+              cargo install toml-cli
               grep branch Cargo.toml | grep develop | awk '{print $1}' | xargs -I[] cargo add --allow-prerelease []
               sed -i 's/branch = "develop", //g' Cargo.toml
-              cargo install toml-cli
+              echo $CIRCLE_BRANCH | sed 's:release/::' | xargs toml set Cargo.toml version
             fi
       - run:
           name: debug
@@ -82,9 +83,6 @@ jobs:
       - checkout
       - restore_cache:
           key: rs-git-sha-{{ .Revision }}{{ .Branch }}
-      - run:
-          name: update version
-          command: echo $CIRCLE_BRANCH | sed 's:release/::' | xargs toml set Cargo.toml version
       - run:
           name: cargo login
           command: cargo login $cargo_TOKEN
