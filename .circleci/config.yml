@@ -30,6 +30,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: update dependencies if releasing
+          command: |
+            if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
+              grep branch Cargo.toml | grep develop | awk '{print $1}' | xargs -I[] cargo add []
+              sed -i 's/branch = "develop", //g' Cargo.toml
+            fi
+      - run:
+          name: debug
+          command: cat Cargo.toml
+      - run:
           name: Check formatting
           command: |
             rustfmt --version
@@ -71,10 +81,12 @@ jobs:
       - run:
           name: install ci tools
           command: 'mkdir -p ~/.build_tools/node && npm install --prefix ~/.build_tools/node kl-ci-tools'
-      - run: |
-          if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
-            ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js deps | xargs -I[] npm install []@latest
-          fi
+      - run:
+          name: update dependencies if releasing
+          command: |
+            if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
+              ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js deps | xargs -I[] npm install []@latest
+            fi
       - save_cache:
           key: git-sha-{{ .Revision }}{{ .Branch }}
           paths:
