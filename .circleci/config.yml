@@ -41,7 +41,7 @@ jobs:
           name: update dependencies if releasing
           command: |
             if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
-              grep branch Cargo.toml | grep develop | awk '{print $1}' | xargs -I[] cargo add []
+              grep branch Cargo.toml | grep develop | awk '{print $1}' | xargs -I[] cargo add --allow-prerelease []
               sed -i 's/branch = "develop", //g' Cargo.toml
             fi
       - run:
@@ -178,14 +178,13 @@ jobs:
 
 workflows:
   version: 2.1
-  rs_build_and_test:
+    jobs:
+  build_test_deploy:
     jobs:
       - init-rs
       - test-rs:
           requires:
             - init-rs
-  js_build_and_test:
-    jobs:
       - init
       - test:
           requires:
@@ -193,12 +192,14 @@ workflows:
       - publish-dev:
           requires:
             - test
+            - test-rs
           filters:
             branches:
               only: develop
       - publish-latest:
           requires:
             - test
+            - test-rs
           filters:
             branches:
               only: /release\/v([0-9]+)\.([0-9]+)\.([0-9]+)$/
