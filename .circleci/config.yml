@@ -178,7 +178,6 @@ jobs:
 
 workflows:
   version: 2.1
-    jobs:
   build_test_deploy:
     jobs:
       - init-rs
