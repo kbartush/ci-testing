@@ -24,6 +24,14 @@ jobs:
             rustfmt --version
             cargo fmt -- --check
       - run:
+          name: Cargo install
+          command: cargo install cargo-edit
+      - run:
+          name: Check formatting
+          command: |
+            rustfmt --version
+            cargo fmt -- --check
+      - run:
           name: update dependencies if releasing
           command: |
             if [[ "$CIRCLE_BRANCH" =~ release/v.* ]]; then
