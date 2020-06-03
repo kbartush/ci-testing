@@ -11,20 +11,6 @@ executors:
       - image: circleci/node:latest
 
 jobs:
-  test-rs:
-    executor: rust-latest
-    steps:
-      - checkout
-      - restore_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
-      - run:
-          name: Test
-          command: |
-            rustup toolchain install nightly
-            rustup run nightly cargo test
-            rustup toolchain install stable
-            rustup run stable cargo test
-
   init-rs:
     executor: rust-latest
     steps:
@@ -69,10 +55,38 @@ jobs:
             rustup target add wasm32-unknown-unknown --toolchain nightly
             rustup run nightly cargo build --release --target wasm32-unknown-unknown
       - save_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
+          key: rs-git-sha-{{ .Revision }}{{ .Branch }}
           paths:
             - ~/.cargo
             - ./target
+            - Cargo.toml
+
+  test-rs:
+    executor: rust-latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: rs-git-sha-{{ .Revision }}{{ .Branch }}
+      - run:
+          name: Test
+          command: |
+            rustup toolchain install nightly
+            rustup run nightly cargo test
+            rustup toolchain install stable
+            rustup run stable cargo test
+
+  publish-latest-rs:
+    executor: rust-latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: rs-git-sha-{{ .Revision }}{{ .Branch }}
+      - run:
+          name: cargo login
+          run: cargo login $cargo_TOKEN
+      - run:
+          name: cargo publish
+          run: cargo publish
 
   init:
     executor: node-latest
@@ -91,7 +105,7 @@ jobs:
               ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js deps | xargs -I[] npm install []@latest
             fi
       - save_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
+          key: js-git-sha-{{ .Revision }}{{ .Branch }}
           paths:
             - package.json
             - node_modules
@@ -101,7 +115,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
+          key: js-git-sha-{{ .Revision }}{{ .Branch }}
       - run:
           name: npm build
           command: npm run build
@@ -112,7 +126,7 @@ jobs:
           name: test
           command: npm test
       - save_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
+          key: js-git-sha-{{ .Revision }}{{ .Branch }}
           paths:
             - package.json
             - dist
@@ -125,7 +139,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
+          key: js-git-sha-{{ .Revision }}{{ .Branch }}
       - run:
           name: set develop version
           command: git rev-parse develop | cut -c1-10 | xargs -I[] ~/.build_tools/node/node_modules/kl-ci-tools/dist/bin.js tag dev.[]
@@ -141,7 +155,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: git-sha-{{ .Revision }}{{ .Branch }}
+          key: js-git-sha-{{ .Revision }}{{ .Branch }}
       - run:
           name: setup git config
           command: git config user.email "dev@mazzaroth.io" && git config user.name "CricleCI" && git config --global core.editor "\usr\local\bin\subl -n -w"
@@ -196,6 +210,13 @@ workflows:
             branches:
               only: develop
       - publish-latest:
+          requires:
+            - test
+            - test-rs
+          filters:
+            branches:
+              only: /release\/v([0-9]+)\.([0-9]+)\.([0-9]+)$/
+      - publish-latest-rs:
           requires:
             - test
             - test-rs

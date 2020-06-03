@@ -1,5 +1,5 @@
 [package]
-name = "ci-testing"
+name = "ci-testing-kbartush"
 version = "0.1.0"
 authors = ["Kyle Bartush <kbartush@kochava.com>"]
 edition = "2018"
