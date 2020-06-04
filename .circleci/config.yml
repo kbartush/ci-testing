@@ -38,7 +38,7 @@ jobs:
               grep branch Cargo.toml | grep develop | awk '{print $1}' | xargs -I[] cargo add --allow-prerelease []
               sed -i 's/branch = "develop", //g' Cargo.toml
               export CARGO_VER=$(echo $CIRCLE_BRANCH | sed 's:release/v::')
-              sed -i "s/version=.*/version = \"$CARGO_VER\"/" Cargo.toml
+              sed -i "s/version =.*/version = \"$CARGO_VER\"/" Cargo.toml
             fi
       - run:
           name: debug
